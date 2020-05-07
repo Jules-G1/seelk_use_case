@@ -1,0 +1,21 @@
+SELECT ingestion_date,
+SUM(ams_sp_spend_eur) AS ad_spend,
+SUM(seller_sold_units) AS sales_units,
+SUM(ams_sp_units_ordered_14_d) AS ads_sales_units,
+SUM(seller_sales_ttc_eur) AS sales_euro_ttc,
+SUM(ams_sp_sales_14_d_eur) AS ads_sales_euro_ttc,
+SUM(ams_sp_impressions) AS ads_imp,
+SUM(ams_sp_clicks) AS ads_click,
+SUM(ams_sp_conversions_14_d) AS ads_conv,
+COUNT(DISTINCT(product_code)) AS nb_online_products,
+AVG(average_rating) AS avg_rating,
+CAST(MAX(smallest_category_ranking) AS integer) AS worst_ranking,
+CAST(MIN(smallest_category_ranking) AS integer) AS best_ranking,
+CAST(AVG(smallest_category_ranking) AS integer) AS avg_ranking,
+CAST(AVG(nb_reviews) AS integer) AS avg_nb_reviews,
+AVG(catalogue_health_score) AS avg_catalogue_hs,
+AVG(review_health_score) AS avg_review_hs,
+AVG(buy_box_health_score) AS avg_buy_box_hs
+
+FROM bi_daily
+GROUP BY ingestion_date
