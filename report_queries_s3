@@ -1,0 +1,26 @@
+Data extraction for charts:
+
+SELECT ingestion_date,
+sum(seller_sales_ttc_eur) AS sales,
+sum(ams_sp_sales_14_d_eur) AS ads_sales,
+sum(ams_sp_spend_eur) AS ads_spend
+FROM bi_daily
+GROUP BY ingestion_date
+ORDER BY ingestion_date DESC
+
+--
+Quarter to quarter growth computation:
+
+WITH o as (
+      SELECT date_trunc('quarter', ingestion_date) as quarter,
+       SUM(seller_sales_ttc_eur) as sales,
+		COUNT(DISTINCT(product_code))
+FROM bi_daily
+GROUP BY quarter
+ORDER BY quarter
+     )
+SELECT o.*, 
+       ((sales-LAG(sales,4) OVER (ORDER BY quarter))/(LAG(sales,4) OVER (ORDER BY quarter)))*100 as sales_growth,
+	   ((sales-LAG(sales,4) OVER (ORDER BY quarter))/(LAG(sales,4) OVER (ORDER BY quarter)))*100 as sales_growth
+FROM o
+ORDER BY quarter
