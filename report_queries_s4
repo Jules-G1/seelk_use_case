@@ -1,0 +1,30 @@
+Data extracted for graphs
+
+﻿SELECT
+date_trunc('month', ingestion_date) as date_month,
+product_dimensions.shipment,
+COUNT(DISTINCT(bi_daily.product_code)) as online_product,
+(SUM(seller_sales_ttc_eur)/COUNT(DISTINCT(bi_daily.product_code))) AS sales_by_product,
+FROM bi_daily
+LEFT JOIN product_dimensions
+ON bi_daily.product_code = product_dimensions.product_code
+WHERE product_dimensions.marketplace = 'amazon_fr'
+GROUP BY date_month, product_dimensions.shipment
+ORDER BY date_month, online_product
+
+--
+
+Compute metrics:
+
+SELECT date_trunc('year', ingestion_date) as date_year,
+bi_daily.marketplace,
+shipment,
+sum(seller_sales_ttc_eur) AS sales,
+COUNT(DISTINCT(bi_daily.product_code)) AS online_product,
+SUM(seller_sales_ttc_eur)/COUNT(DISTINCT(bi_daily.product_code)) AS sales_by_product
+FROM bi_daily
+LEFT JOIN product_dimensions
+ON bi_daily.product_code = product_dimensions.product_code
+WHERE bi_daily.marketplace='amazon_fr'
+GROUP BY date_year, bi_daily.marketplace, shipment
+ORDER BY date_year
