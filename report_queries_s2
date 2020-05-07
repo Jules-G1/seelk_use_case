@@ -1,0 +1,11 @@
+Data extraction for graphs:
+
+SELECT
+date_trunc('month', ingestion_date) as date_month,
+product_type,
+COUNT(DISTINCT(bi_daily.product_code)) as online_product
+FROM bi_daily
+LEFT JOIN product_dimensions
+ON bi_daily.product_code = product_dimensions.product_code
+GROUP BY date_month, product_dimensions.product_type
+ORDER BY date_month, online_product
